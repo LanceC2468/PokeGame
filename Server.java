@@ -36,7 +36,7 @@ public class Server {
             System.out.println("Creating a new handler for this client...");
  
             // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s, ""+i, dis, dos);
+            ClientHandler mtch = new ClientHandler(s, ""+i, dis, dos, i);
  
             // Create a new Thread with this object.
             Thread t = new Thread(mtch);
@@ -65,6 +65,7 @@ public class Server {
         final DataInputStream dis;
         final DataOutputStream dos;
         Socket s;
+        private int col;
 
         //Rule Flags
         boolean gameStart   = false;
@@ -72,11 +73,20 @@ public class Server {
 
        
 
-        public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos){
+        // ANSI escape code constants for text colors and background colors
+        String RESET = "\u001B[0m";
+        String RED_TEXT = "\u001B[31m";
+        String GREEN_TEXT = "\u001B[32m";
+        String YELLOW_TEXT = "\u001B[33m";
+        String BLACK_BG = "\u001B[40m";
+        String WHITE_BG = "\u001B[47m";
+
+        public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos, int col){
             this.dis = dis;
             this.dos = dos;
             this.name = name;
             this.s = socket;
+            this.col = col;
         }
         @Override
         public void run(){
@@ -114,7 +124,7 @@ public class Server {
                     // Write on all output streams
                     // output stream
                     if(mc.name != this.name){
-                        mc.dos.writeUTF(this.name+" : "+MsgToSend);
+                        mc.dos.writeUTF(RED_TEXT + this.name + RESET +" : " + MsgToSend);
                     }
                     
                 }
