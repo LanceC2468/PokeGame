@@ -124,7 +124,8 @@ public class Server {
                     // Write on all output streams
                     // output stream
                     if(mc.name != this.name){
-                        mc.dos.writeUTF(RED_TEXT + this.name + RESET +" : " + MsgToSend);
+                        String colorcode = "\u001B[3" + this.col + "m";
+                        mc.dos.writeUTF(colorcode + this.name + RESET +" : " + MsgToSend);
                     }
                     
                 }
