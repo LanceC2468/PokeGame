@@ -69,6 +69,14 @@ public class Server {
 
         int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
 
+        // ANSI escape code constants for text colors and background colors
+        String RESET = "\u001B[0m";
+        String RED_TEXT = "\u001B[31m";
+        String GREEN_TEXT = "\u001B[32m";
+        String YELLOW_TEXT = "\u001B[33m";
+        String BLACK_BG = "\u001B[40m";
+        String WHITE_BG = "\u001B[47m";
+
         public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos){
             this.dis = dis;
             this.dos = dos;
