@@ -17,6 +17,7 @@ public class Client
    public static final int SERVER_PORT = 25565;  //some default port
 	public static void main(String args[]) throws UnknownHostException, IOException 
 	{ 
+		public String name;
        final String hostName;
        if (args.length > 0) {
           hostName = args[0];

@@ -1,2 +1,2 @@
 javac Client.java
-java Client
+java Client 10.147.17.30
