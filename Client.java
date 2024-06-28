@@ -8,6 +8,8 @@ import java.util.Scanner;
 // Java implementation for multithreaded chat client - https://www.geeksforgeeks.org/multi-threaded-chat-application-set-2/
 // Save file as Client.java 
 
+import org.fusesource.jansi.AnsiConsole;
+
 import java.io.*; 
 import java.net.*; 
 import java.util.Scanner; 
@@ -77,7 +79,8 @@ public class Client
 					try { 
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
-						System.out.println(msg); 
+						//System.out.println(msg); 
+						AnsiConsole.out().println(msg);
 					} catch (IOException e) { 
 						break;
 						//e.printStackTrace(); 
