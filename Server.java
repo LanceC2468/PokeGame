@@ -62,7 +62,9 @@ public class Server {
         final DataInputStream dis;
         final DataOutputStream dos;
         Socket s;
-        boolean gameStart;
+
+        //Rule Flags
+        boolean gameStart = false;
         
         public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos){
             this.dis = dis;
@@ -83,6 +85,12 @@ public class Server {
                 if(input.equals("GIVE UP")){
                     this.s.close();
                     break;
+                }else if(input.equals("START")){
+                    gameStart = true;
+                }else if(input.contains("/NAME")){
+                    StringTokenizer newName = new StringTokenizer(input, " ");
+                    newName.nextToken();
+                    this.name = newName.nextToken();
                 }
                 // break the string into message and recipient part
                 StringTokenizer st = new StringTokenizer(input, "#");
