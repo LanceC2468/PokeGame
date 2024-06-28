@@ -59,6 +59,7 @@ public class Client
 						dos.writeUTF(msg); 
 					} catch (IOException e) { 
 						e.printStackTrace(); 
+						break;
 					} 
 				} 
 			} 
@@ -78,6 +79,7 @@ public class Client
 					} catch (IOException e) { 
 
 						e.printStackTrace(); 
+						break;
 					} 
 				} 
 			} 
