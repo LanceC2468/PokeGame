@@ -56,6 +56,9 @@ public class Server {
  
     }
 }
+    public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
+    LinkedList<String> usedNames = new LinkedList<String>();
+
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
         private String name;
@@ -68,7 +71,7 @@ public class Server {
         boolean gameStart   = false;
         boolean last2First  = false;
 
-        int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
+       
 
         // ANSI escape code constants for text colors and background colors
         String RESET = "\u001B[0m";
