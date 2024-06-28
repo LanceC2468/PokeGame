@@ -64,8 +64,11 @@ public class Server {
         Socket s;
 
         //Rule Flags
-        boolean gameStart = false;
-        
+        boolean gameStart   = false;
+        boolean last2First  = false;
+
+        int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
+
         public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos){
             this.dis = dis;
             this.dos = dos;
@@ -85,12 +88,16 @@ public class Server {
                 if(input.equals("GIVE UP")){
                     this.s.close();
                     break;
-                }else if(input.equals("START")){
+                }else if(input.equals("/START")){
                     gameStart = true;
                 }else if(input.contains("/NAME")){
                     StringTokenizer newName = new StringTokenizer(input, " ");
                     newName.nextToken();
                     this.name = newName.nextToken();
+                    break;
+                }else if(input.equals("/GAMEMODE")){
+                    last2First = true;
+                    input = "Last letter will be the first for the next name.";
                 }
                 // break the string into message and recipient part
                 StringTokenizer st = new StringTokenizer(input, "#");
