@@ -53,7 +53,7 @@ public class Client
 
 					// read the message to deliver. 
 					String msg = scn.nextLine(); 
-					
+
 					try { 
 						// write on the output stream 
 						dos.writeUTF(msg); 
@@ -76,8 +76,8 @@ public class Client
 						String msg = dis.readUTF(); 
 						System.out.println(msg); 
 					} catch (IOException e) { 
-
-						e.printStackTrace(); 
+						break;
+						//e.printStackTrace(); 
 					} 
 				} 
 			} 
