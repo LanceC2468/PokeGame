@@ -87,7 +87,6 @@ public class Client
 		sendMessage.start(); 
 		readMessage.start(); 
 
-		scn.close();
-		s.close();
+
 	} 
 }
