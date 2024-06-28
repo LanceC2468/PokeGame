@@ -30,16 +30,15 @@ public class Client
        } else {
           portNumber = SERVER_PORT;
        }
-       final int ServerPort = 1234;
 
 
 		Scanner scn = new Scanner(System.in); 
 		
 		// getting localhost ip 
-		InetAddress ip = InetAddress.getByName("localhost"); 
+		InetAddress ip = InetAddress.getByName(hostName); 
 		
 		// establish the connection 
-		Socket s = new Socket(ip, ServerPort); 
+		Socket s = new Socket(ip, portNumber); 
 		
 		// obtaining input and out streams 
 		DataInputStream dis = new DataInputStream(s.getInputStream()); 
