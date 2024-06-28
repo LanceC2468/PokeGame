@@ -36,7 +36,7 @@ public class Server {
             System.out.println("Creating a new handler for this client...");
  
             // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos);
+            ClientHandler mtch = new ClientHandler(s, ""+i, dis, dos);
  
             // Create a new Thread with this object.
             Thread t = new Thread(mtch);
@@ -87,7 +87,7 @@ public class Server {
                 // break the string into message and recipient part
                 StringTokenizer st = new StringTokenizer(input, "#");
                 String MsgToSend = st.nextToken();
-                String recipient = st.nextToken();
+                //String recipient = st.nextToken();
  
                 // search for the recipient in the connected devices list.
                 // ar is the vector storing client of active users
@@ -95,7 +95,10 @@ public class Server {
                 {
                     // Write on all output streams
                     // output stream
-                    mc.dos.writeUTF(this.name+" : "+MsgToSend);
+                    if(mc.name != this.name){
+                        mc.dos.writeUTF(this.name+" : "+MsgToSend);
+                    }
+                    
                 }
                 } catch (IOException e) {
                  
