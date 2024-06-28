@@ -107,7 +107,7 @@ public class Server {
                     StringTokenizer newName = new StringTokenizer(input, " ");
                     newName.nextToken();
                     this.name = newName.nextToken();
-                    break;
+                    continue;
                 }else if(input.equals("/GAMEMODE")){
                     last2First = true;
                     input = "Last letter will be the first for the next name.";
