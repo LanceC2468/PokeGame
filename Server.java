@@ -55,14 +55,14 @@ public class Server {
             i++;
  
     }
-        }
+}
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
         private String name;
         final DataInputStream dis;
         final DataOutputStream dos;
         Socket s;
-        boolean isloggedin;
+        boolean gameStart;
         
         public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos){
             this.dis = dis;
