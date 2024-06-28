@@ -77,7 +77,7 @@ public class Client
 					try { 
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
-						System.out.println(msg); 
+						System.out.println("\u001B[31m" + msg); 
 					} catch (IOException e) { 
 						break;
 						//e.printStackTrace(); 
