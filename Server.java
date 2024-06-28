@@ -1,14 +1,11 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.*;
-
+import java.io.*;
+import java.util.*;
 import javax.swing.text.Style;
 
-import java.io.*;
 public class Server {
-        public static void main(String[] args) {
+    static Vector<ClientHandler> ar = new Vector<>();
+        public static void main(String[] args) throws IOException {
             final int portNumber;
         if (args.length > 0)
         {
@@ -18,80 +15,92 @@ public class Server {
         {
             portNumber = 25565;
         }
-
-        int clientCounter = 0;
-
-        // Get this server's process id number (PID). This helps
-        // to identify the server in TaskManager or TCPView.
-        final ProcessHandle handle = ProcessHandle.current();
-        final long pid = handle.pid();
-        System.out.println("SERVER: Process ID number (PID): " + pid );
-
-        // Get the name and IP address of the local host and
-        // print them on the console for information purposes.
-        try
+        ServerSocket ss = new ServerSocket(portNumber);
+         
+        Socket s;
+        int i = 0;
+         
+        // running infinite loop for getting
+        // client request
+        while (true) 
         {
-            final InetAddress address = InetAddress.getLocalHost();
-            System.out.println("SERVER Hostname: " + address.getCanonicalHostName() );
-            System.out.println("SERVER IP address: " +address.getHostAddress() );
-            System.out.println("SERVER Using port no. " + portNumber);
+            // Accept the incoming request
+            s = ss.accept();
+ 
+            System.out.println("New client request received : " + s);
+             
+            // obtain input and output streams
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+             
+            System.out.println("Creating a new handler for this client...");
+ 
+            // Create a new handler object for handling this request.
+            ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos);
+ 
+            // Create a new Thread with this object.
+            Thread t = new Thread(mtch);
+             
+            System.out.println("Adding this client to active client list");
+ 
+            // add this client to active clients list
+            ar.add(mtch);
+ 
+            // start the thread.
+            t.start();
+ 
+            // increment i for new client.
+            // i is used for naming only, and can be replaced
+            // by any naming scheme
+            i++;
+ 
+    }
         }
-        catch (UnknownHostException e)
-        {
-            System.out.println("Unable to determine this host's address.");
-            System.out.println( e );
+    static class ClientHandler implements Runnable {
+        Scanner scn = new Scanner(System.in);
+        private String name;
+        final DataInputStream dis;
+        final DataOutputStream dos;
+        Socket s;
+        boolean isloggedin;
+        
+        public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos){
+            this.dis = dis;
+            this.dos = dos;
+            this.name = name;
+            this.s = socket;
         }
-
-        // Create the server's listening socket.
-        ServerSocket serverSocket = null;
-        try
-        {
-            serverSocket = new ServerSocket(portNumber);
-            System.out.println("SERVER online:");
-        }
-        catch (IOException e)
-        {
-            System.out.println("SERVER: Error creating network connection.");
-            //System.out.println( e );
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
-        while(true) // Serve multiple clients.
-        {           // Each client can make one request.
-            Socket socket = null;
-            BufferedReader in = null;
-            PrintWriter out = null;
-
-            // Wait for an incoming client request.
-            try
-            {
-                socket = serverSocket.accept();
-
-                // At this point, a client connection has been made.
-                in = new BufferedReader(
-                        new InputStreamReader(
-                            socket.getInputStream()));
-
-                out = new PrintWriter(socket.getOutputStream());
-            }
-            catch(IOException e)
-            {
-                System.out.println("SERVER: Error connecting to client");
-                System.out.println( e );
-            }
-
-            ++clientCounter;
-            // Get the IP address of the client and log it to the console.
-            final InetAddress clientIP = socket.getInetAddress();
-            System.out.println("SERVER: Client " + clientCounter + ": IP: " +  clientIP.getHostAddress());
-            try{
-                socket.close();
-            }
-            catch(IOException e)
-            {
-                System.out.println("SERVER: Error communicating with client (Client no. " + clientCounter + ")");
-                    System.out.println( e );
+        @Override
+        public void run(){
+            String input;
+            while(true){
+                try{
+                      // receive the string
+                input = dis.readUTF();
+                 input = input.toUpperCase();
+                System.out.println(input);
+                 
+                if(input.equals("GIVE UP")){
+                    this.s.close();
+                    break;
+                }
+                // break the string into message and recipient part
+                StringTokenizer st = new StringTokenizer(input, "#");
+                String MsgToSend = st.nextToken();
+                String recipient = st.nextToken();
+ 
+                // search for the recipient in the connected devices list.
+                // ar is the vector storing client of active users
+                for (ClientHandler mc : Server.ar) 
+                {
+                    // Write on all output streams
+                    // output stream
+                    mc.dos.writeUTF(this.name+" : "+MsgToSend);
+                }
+                } catch (IOException e) {
+                 
+                    e.printStackTrace();
+                }
             }
         }
     }
