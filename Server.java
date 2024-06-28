@@ -18,7 +18,7 @@ public class Server {
         ServerSocket ss = new ServerSocket(portNumber);
          
         Socket s;
-        int i = 0;
+        int i = 1;
          
         // running infinite loop for getting
         // client request
