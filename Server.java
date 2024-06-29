@@ -105,17 +105,26 @@ public class Server {
                     gameStart = true;
                 }else if(input.contains("/NAME")){
                     StringTokenizer newName = new StringTokenizer(input, " ");
-                    newName.nextToken();
-                    this.name = newName.nextToken();
+                    if(newName.countTokens()>1){
+                        newName.nextToken();
+                        this.name = newName.nextToken();
+                    }
                     continue;
-                }else if(input.equals("/GAMEMODE")){
-                    last2First = true;
-                    input = "Last letter will be the first for the next name.";
+                }else if(input.contains("/GAMEMODE")){
+                    StringTokenizer gm = new StringTokenizer(input);
+                    if(gm.countTokens()>1){
+                        gm.nextToken();
+                        if(gm.nextToken().equals("LAST2FIRST")){
+                            last2First = true;
+                            dos.writeUTF("Last letter will be the first for the next name."); 
+                        }
+                        
+                    }
+                    
                 }
                 // break the string into message and recipient part
                 StringTokenizer st = new StringTokenizer(input, "#");
                 String MsgToSend = st.nextToken();
-                //String recipient = st.nextToken();
  
                 // search for the recipient in the connected devices list.
                 // ar is the vector storing client of active users
