@@ -86,7 +86,7 @@ public class Server {
             this.dos = dos;
             this.name = name;
             this.s = socket;
-            this.col = col;
+            this.col = (col % 6) + 1;  //cycles between red, green, yellow, blue, magenta, cyan
         }
         @Override
         public void run(){
