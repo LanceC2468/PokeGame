@@ -59,6 +59,7 @@ public class Server {
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
     LinkedList<String> usedNames = new LinkedList<String>();
     static char lastLetter;
+    static int turn = 1;
 
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
@@ -129,23 +130,43 @@ public class Server {
                     }
                     
                 }
-                if(input.charAt(input.length()-1)==lastLetter){
-
-                }
+                
                 // break the string into message
                 StringTokenizer st = new StringTokenizer(input, "#");
                 String MsgToSend = st.nextToken();
  
-
-                for (ClientHandler mc : Server.ar) 
-                {
-                    // Write on all output streams
-                    // output stream
-                    if(mc.name != this.name){
-                        String colorcode = "\u001B[3" + this.col + "m";
-                        mc.dos.writeUTF(colorcode + this.name + RESET +" : " + MsgToSend);
+                if(!gameStart){
+                    for (ClientHandler mc : Server.ar) 
+                    {
+                        // Write on all output streams
+                        // output stream
+                        if(mc.name != this.name){
+                            String colorcode = "\u001B[3" + this.col + "m";
+                            mc.dos.writeUTF(colorcode + this.name + RESET +" : " + MsgToSend);
+                        }
+                        
                     }
-                    
+                }else{
+                    if(MsgToSend.charAt(MsgToSend.length()-1) == lastLetter && Server.ar.get(turn).name == this.name){
+                        for (ClientHandler mc : Server.ar) 
+                        {
+                            // Write on all output streams
+                            // output stream
+                            if(mc.name != this.name){
+                                String colorcode = "\u001B[3" + this.col + "m";
+                                mc.dos.writeUTF(colorcode + this.name + RESET +" : " + MsgToSend);
+                            }
+                            
+                        }
+                        lastLetter = MsgToSend.charAt(MsgToSend.length()-1);
+                    }else if(Server.ar.get(turn).name != this.name){
+                        dos.writeUTF("It is not your turn.");
+                    }else if(MsgToSend.charAt(MsgToSend.length()-1) == lastLetter){
+                        dos.writeUTF("That is not a valid word");
+                    }
+                    else{
+                        dos.writeUTF("nothing works");
+                    }
                 }
                 } catch (IOException e) {
                     break;
