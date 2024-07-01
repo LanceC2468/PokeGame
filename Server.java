@@ -58,6 +58,7 @@ public class Server {
 }
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
     LinkedList<String> usedNames = new LinkedList<String>();
+    static char lastLetter;
 
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
@@ -102,7 +103,13 @@ public class Server {
                     this.s.close();
                     break;
                 }else if(input.equals("/START")){
+                    Random r = new Random();
                     gameStart = true;
+                    lastLetter = (char)(r.nextInt(26)+'A');
+                    for(ClientHandler mc : Server.ar){
+                        mc.dos.writeUTF("The first letter to use is: " + lastLetter);
+                    }
+                    continue;
                 }else if(input.contains("/NAME")){
                     StringTokenizer newName = new StringTokenizer(input, " ");
                     if(newName.countTokens()>1){
@@ -122,12 +129,14 @@ public class Server {
                     }
                     
                 }
-                // break the string into message and recipient part
+                if(input.charAt(input.length()-1)==lastLetter){
+
+                }
+                // break the string into message
                 StringTokenizer st = new StringTokenizer(input, "#");
                 String MsgToSend = st.nextToken();
  
-                // search for the recipient in the connected devices list.
-                // ar is the vector storing client of active users
+
                 for (ClientHandler mc : Server.ar) 
                 {
                     // Write on all output streams
