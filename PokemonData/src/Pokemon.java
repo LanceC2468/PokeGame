@@ -3,22 +3,12 @@ import java.util.*;
 
 public class Pokemon {
     private String name;
-    private String type1;
-    private String type2;
+    private String type1 = "";
+    private String type2 = "";
     
     public Pokemon(String primaryName, String types) {
-        name=primaryName;
-        StringTokenizer t = new StringTokenizer(types, "\n");
-        boolean i = true;
-        while(t.hasMoreElements()){
-            if(t.toString().contains(name)) continue;  //eliminates parsing RatataAlolanForm by detecting Ratata
-            else{  //else parse the types
-                if(i) type1 += t.toString();
-                else type2 += t.toString();
-                i = !i; //alternate typing.
-            }  //interesting edge case (and possible future bug) where pokemon can have several forms and be monotype
-            t.nextToken();
-        }
+        setName(name);
+        setTypes(types);
     }
     public String getName(){
         return name;
@@ -28,5 +18,34 @@ public class Pokemon {
     }
     public String getType2(){
         return type2;
+    }
+    public String getTypes(){
+        return type1 + " " + type2;
+    }
+    public void setName(String n){
+        name = n;
+    }
+    public void setType1(String t){
+        type1 = t;
+    }
+    public void setType2(String t){
+        type2 = t;
+    }
+    public void setTypes(String t){
+        StringTokenizer tkn = new StringTokenizer(t, "\n");
+        boolean i = true;
+        while (tkn.hasMoreTokens()) {
+            String type = tkn.nextToken();
+            if (tkn.toString().contains(name))
+                continue; // eliminates parsing RatataAlolanForm by detecting Ratata
+            else { // else parse the types
+                if (i)
+                    type1 += type;
+                else
+                    type2 += type;
+                i = !i; // alternate typing.
+            } // interesting edge case (and possible future bug) where pokemon can have
+              // several forms and be monotype
+        }
     }
 }
