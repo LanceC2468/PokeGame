@@ -22,9 +22,14 @@ public class Server {
          
         // running infinite loop for getting
         // client request
+
+        //  games can last quite long, so to implement and address any issues with joining mid-game, we multi-thread
+        //  ____________________________________________________ this loop needs to fork ________________________________________________
+        
         while (true) 
         {
             // Accept the incoming request
+            System.out.println("awaiting client");
             s = ss.accept();
  
             System.out.println("New client request received : " + s);
@@ -55,10 +60,65 @@ public class Server {
             i++;
  
     }
+    //_______________________________________________________________________________________________________________________________
+    /*  after/while forking, implement game in a way that accounts for changing number of players
+     *  
+     */
 }
+    //list of gamemode constants
+
+    public static final int LAST2FIRST = 0;
+    public static final int TYPES = 1;
+    public static final int LAST2FIRST_TYPES = 2;
+
+
+    //list of type constants
+    
+    public static final int ALL = 0;
+    public static final int NORMAL = 1;
+    public static final int FIRE = 2;
+    public static final int WATER = 3;
+    public static final int ELECTRIC = 4;
+    public static final int GRASS = 5;
+    public static final int ICE = 6;
+    public static final int FIGHTING = 7;
+    public static final int POISON = 8;
+    public static final int GROUND = 9;
+    public static final int FLYING = 10;
+    public static final int PSYCHIC = 11;
+    public static final int BUG = 12;
+    public static final int ROCK = 13;
+    public static final int GHOST = 14;
+    public static final int DRAGON = 15;
+    public static final int DARK = 16;
+    public static final int STEEL = 17;
+    public static final int FAIRY = 18;
+    public static final int NONE = 19;
+    
+
+
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
     LinkedList<String> usedNames = new LinkedList<String>();
     static char lastLetter;
+
+    static class Pokemon {
+        private String name;
+        private int type1;
+        private int type2;
+
+        private int type1_alolan;
+        private int type2_alolan;
+
+        private int type1_hisuian;
+        private int type2_hisuian;
+
+        private int type1_galarian;
+        private int type2_galarian;
+    }
+
+
+
+
 
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
@@ -69,18 +129,21 @@ public class Server {
         private int col;
 
         //Rule Flags
-        boolean gameStart   = false;
-        boolean last2First  = false;
-
+        boolean gamePause   = true;
+        int GAMEMODE = 0;
+        int TYPING = 0;
        
 
         // ANSI escape code constants for text colors and background colors
+        
         String RESET = "\u001B[0m";
+        /*
         String RED_TEXT = "\u001B[31m";
         String GREEN_TEXT = "\u001B[32m";
         String YELLOW_TEXT = "\u001B[33m";
         String BLACK_BG = "\u001B[40m";
         String WHITE_BG = "\u001B[47m";
+        */
 
         public ClientHandler(Socket socket, String name, DataInputStream dis, DataOutputStream dos, int col){
             this.dis = dis;
@@ -89,69 +152,81 @@ public class Server {
             this.s = socket;
             this.col = (col % 6) + 1;  //cycles between red, green, yellow, blue, magenta, cyan
         }
-        @Override
-        public void run(){
+            @Override 
+            public void run(){
             String input;
-            while(true){
-                try{
-                      // receive the string
-                input = dis.readUTF();
-                 input = input.toUpperCase();
-                System.out.println(input);
-                 
-                if(input.equals("GIVE UP")){
-                    this.s.close();
-                    break;
-                }else if(input.equals("/START")){
-                    Random r = new Random();
-                    gameStart = true;
-                    lastLetter = (char)(r.nextInt(26)+'A');
-                    for(ClientHandler mc : Server.ar){
-                        mc.dos.writeUTF("The first letter to use is: " + lastLetter);
+                while(true){
+                    try{
+                        // receive the string
+                    input = dis.readUTF();
+                    input = input.toUpperCase();
+                    System.out.println(input);
+                    
+                    if(input.equals("GIVE UP") || input.equals("/QUIT")){
+                        this.s.close();
+                        break;
+                    }else if(input.equals("/START")){
+                        Random r = new Random();
+                        gamePause = false;
+                        lastLetter = (char)(r.nextInt(26)+'A');
+                        for(ClientHandler mc : Server.ar){
+                            mc.dos.writeUTF("The first letter to use is: " + lastLetter);
+                        }
+                        //continue;
+                    }else if(input.contains("/NAME")){
+                        StringTokenizer newName = new StringTokenizer(input, " ");
+                        if(newName.countTokens()>1){
+                            newName.nextToken();
+                            this.name = newName.nextToken();
+                        }
+                        continue;
+                    }else if(input.contains("/GAMEMODE")){
+                        StringTokenizer gm = new StringTokenizer(input);
+                        if(gm.countTokens()>1){
+                            gm.nextToken();
+                            if(gm.nextToken().equals("LAST2FIRST")){
+                                GAMEMODE = LAST2FIRST;
+                                dos.writeUTF("Last letter will be the first for the next name."); 
+                            }
+                        }        
                     }
-                    continue;
-                }else if(input.contains("/NAME")){
-                    StringTokenizer newName = new StringTokenizer(input, " ");
-                    if(newName.countTokens()>1){
-                        newName.nextToken();
-                        this.name = newName.nextToken();
+                    if(input.charAt(input.length()-1)==lastLetter){
+
                     }
-                    continue;
-                }else if(input.contains("/GAMEMODE")){
-                    StringTokenizer gm = new StringTokenizer(input);
-                    if(gm.countTokens()>1){
-                        gm.nextToken();
-                        if(gm.nextToken().equals("LAST2FIRST")){
-                            last2First = true;
-                            dos.writeUTF("Last letter will be the first for the next name."); 
+                    // break the string into message
+                    StringTokenizer st = new StringTokenizer(input, "#");
+                    String MsgToSend = st.nextToken();
+    
+
+                    //implement full game here
+                    if(!gamePause){
+                        switch(GAMEMODE){
+                            case 0:
+                                //is the input valid?
+                                
+                                break;
+                            case 2:
+                                break;
+                        }
+                    }
+
+
+                    //print response to all clients.
+                    for (ClientHandler mc : Server.ar) 
+                    {
+                        // Write on all output streams
+                        // output stream
+                        if(mc.name != this.name){
+                            String colorcode = "\u001B[3" + this.col + "m";
+                            mc.dos.writeUTF(colorcode + this.name + RESET + " : " + MsgToSend);
                         }
                         
                     }
-                    
-                }
-                if(input.charAt(input.length()-1)==lastLetter){
-
-                }
-                // break the string into message
-                StringTokenizer st = new StringTokenizer(input, "#");
-                String MsgToSend = st.nextToken();
- 
-
-                for (ClientHandler mc : Server.ar) 
-                {
-                    // Write on all output streams
-                    // output stream
-                    if(mc.name != this.name){
-                        String colorcode = "\u001B[3" + this.col + "m";
-                        mc.dos.writeUTF(colorcode + this.name + RESET +" : " + MsgToSend);
+                    } catch (IOException e) {
+                        break;
+                        //e.printStackTrace();
                     }
-                    
-                }
-                } catch (IOException e) {
-                    break;
-                    //e.printStackTrace();
                 }
             }
-        }
     }
 }
