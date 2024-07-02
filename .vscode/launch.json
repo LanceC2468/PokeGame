@@ -2,6 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Poketest",
+      "request": "launch",
+      "mainClass": "PokemonData.src.Poketest",
+      "projectName": "PokeGame_f85d4eb6"
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
