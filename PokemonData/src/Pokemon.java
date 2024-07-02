@@ -7,7 +7,7 @@ public class Pokemon {
     private String type2 = "";
     
     public Pokemon(String primaryName, String types) {
-        setName(name);
+        setName(primaryName);
         setTypes(types);
     }
     public String getName(){
@@ -36,7 +36,8 @@ public class Pokemon {
         boolean i = true;
         while (tkn.hasMoreTokens()) {
             String type = tkn.nextToken();
-            if (tkn.toString().contains(name))
+            if(type.isEmpty()) continue;
+            if (type.contains(name))
                 continue; // eliminates parsing RatataAlolanForm by detecting Ratata
             else { // else parse the types
                 if (i)
