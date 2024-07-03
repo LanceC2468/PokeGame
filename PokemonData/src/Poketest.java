@@ -17,34 +17,35 @@ public class Poketest {
         try{  //this is broken!  fix this!
             Scanner dex = new Scanner(names_types_txt);
             dex.useDelimiter("\n");
+
+            String name_string = "";
+            String types_string;
             while(dex.hasNext()){  
-                //0.)Throw away Ndex #
                 String data = dex.next();  //temporary data
-                String name_string;
-                String types_string;
 
-                if(data.isBlank()) continue;
-                data = dex.next();  //throw away Ndex #
-                // 1.)Extract Name
-                name_string = dex.next();
+                if(data.contains("#"))continue;  //throw away Ndex #
+                if(data.isBlank())continue;  //throw away newline characters
+                if(name_string.isEmpty()) { //first string is name entry
+                    name_string = data;
+                    dex.useDelimiter("#");  //rest of string is types
+                    types_string = dex.next();
+                    dex.useDelimiter("\n");
 
-                //2.)Extract Type
-                dex.useDelimiter("#");
-                types_string = dex.next();
 
-                //3.)Revert any Scanner changes
-                dex.useDelimiter("\n");
-                dex.next();
-
-                //4.) Add pokemon to the list
-                Pokemon pkmn = new Pokemon(name_string, types_string);
-                plist.add(pkmn);
+                    Pokemon pkmn = new Pokemon(name_string, types_string);
+                    plist.add(pkmn);
+                    name_string = "";
+                    types_string = "";
+                }
             }
 
         }catch(IOException e){
             e.printStackTrace();
         }
         
+        for(int j = 0; i < 50; i++){
+            System.out.println(plist.get(i).getName() + "\t" + plist.get(i).getTypes());
+        }
 
         Scanner s = new Scanner(System.in);
         System.out.println("press Enter to exit the program");
