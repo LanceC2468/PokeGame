@@ -6,9 +6,20 @@ public class Pokemon {
     private String type1 = "";
     private String type2 = "";
     
-    public Pokemon(String primaryName, String types) {
-        setName(primaryName);
-        setTypes(types);
+    public Pokemon(String primaryName, String type1, String type2) {
+        this.name = primaryName;
+        this.type1 = type1;
+        this.type2 = type2;
+    }
+    public Pokemon(String primaryName, String type1){
+        this.name = primaryName;
+        this.type1 = type1;
+        type2 = "None";
+    }
+    public Pokemon(String name){
+        this.name = name;
+        type1 = "None";
+        type2 = "None";
     }
     public String getName(){
         return name;

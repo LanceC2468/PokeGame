@@ -98,7 +98,7 @@ public class Server {
 
 
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
-    LinkedList<String> usedNames = new LinkedList<String>();
+    LinkedList<Pokemon> usedNames = new LinkedList<Pokemon>();
     static char lastLetter;
 
     static class Pokemon {
@@ -114,6 +114,20 @@ public class Server {
 
         private int type1_galarian;
         private int type2_galarian;
+        
+        public Pokemon(String name, int type1, int type2){
+            this.name = name;
+            this.type1 = type1;
+            this.type2 = type2;
+        }
+
+
+        public int getType1(){
+            return type1;
+        }
+        public int getType2(){
+            return type2;
+        }
     }
 
 
