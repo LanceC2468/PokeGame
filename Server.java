@@ -2,7 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.text.Style;
-
+import PokemonData.src.Pokemon;
 public class Server {
     static Vector<ClientHandler> ar = new Vector<>();
         public static void main(String[] args) throws IOException {
@@ -19,7 +19,6 @@ public class Server {
          
         Socket s;
         int i = 1;
-         
         // running infinite loop for getting
         // client request
 
@@ -98,10 +97,11 @@ public class Server {
 
 
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
-    LinkedList<Pokemon> usedNames = new LinkedList<Pokemon>();
+    LinkedList<String> usedNames = new LinkedList<String>();
+    LinkedList<Pokemon> pokemon = new LinkedList<Pokemon>();
     static char lastLetter;
 
-    static class Pokemon {
+    /*static class Pokemon {
         private String name;
         private int type1;
         private int type2;
@@ -130,9 +130,20 @@ public class Server {
         }
     }
 
+    public static LinkedList<Pokemon> fill(){
+        LinkedList<Pokemon> tempList = new LinkedList<Pokemon>();
+        try{
+        Scanner line = new Scanner(new File("/PokemonData/Names.txt"));
+        tempList.add(new Pokemon(line.nextLine()));
+        System.out.println(tempList);
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+        return tempList;
+    } 
 
-
-
+*/
 
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
