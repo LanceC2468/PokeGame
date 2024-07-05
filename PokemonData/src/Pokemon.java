@@ -60,4 +60,8 @@ public class Pokemon {
               // several forms and be monotype
         }
     }
+    @Override
+    public String toString(){
+        return name + " " + type1 + " " + type2;
+    }
 }

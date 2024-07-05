@@ -16,7 +16,7 @@ public class Server {
             portNumber = 25565;
         }
         ServerSocket ss = new ServerSocket(portNumber);
-         
+         fill();
         Socket s;
         int i = 1;
         // running infinite loop for getting
@@ -129,13 +129,13 @@ public class Server {
             return type2;
         }
     }
-
+*/
     public static LinkedList<Pokemon> fill(){
         LinkedList<Pokemon> tempList = new LinkedList<Pokemon>();
         try{
-        Scanner line = new Scanner(new File("/PokemonData/Names.txt"));
-        tempList.add(new Pokemon(line.nextLine()));
-        System.out.println(tempList);
+            Scanner line = new Scanner(new File(".\\PokemonData\\Names.txt"));
+            tempList.add(new Pokemon(line.nextLine()));
+            System.out.println(tempList.getFirst());
         }
         catch(IOException e){
             System.out.println(e);
@@ -143,7 +143,7 @@ public class Server {
         return tempList;
     } 
 
-*/
+
 
     static class ClientHandler implements Runnable {
         Scanner scn = new Scanner(System.in);
