@@ -31,8 +31,8 @@ public class Poketest {
                     types_string = dex.next();
                     dex.useDelimiter("\n");
 
-
-                    Pokemon pkmn = new Pokemon(name_string, types_string);
+                    Pokemon pkmn = new Pokemon(name_string);
+                    pkmn.setTypes(types_string.strip());
                     plist.add(pkmn);
                     name_string = "";
                     types_string = "";
@@ -43,8 +43,8 @@ public class Poketest {
             e.printStackTrace();
         }
         
-        for(int j = 0; i < 50; i++){
-            System.out.println(plist.get(i).getName() + "\t" + plist.get(i).getTypes());
+        for(int j = 0; i < 55; i++){
+            System.out.println(plist.get(i).getName() + "\t\t" + plist.get(i).getTypesPretty());
         }
 
         Scanner s = new Scanner(System.in);

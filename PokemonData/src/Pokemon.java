@@ -16,8 +16,8 @@ public class Pokemon {
         this.type1 = type1;
         type2 = "None";
     }
-    public Pokemon(String name){
-        this.name = name;
+    public Pokemon(String primaryName){
+        this.name = primaryName;
         type1 = "None";
         type2 = "None";
     }
@@ -32,6 +32,10 @@ public class Pokemon {
     }
     public String getTypes(){
         return type1 + " " + type2;
+    }
+    public String getTypesPretty() {
+        if(type2.equals("None")) return type1;
+        else return getTypes();
     }
     public void setName(String n){
         name = n.strip();
@@ -51,10 +55,14 @@ public class Pokemon {
             if (type.contains(name))
                 continue; // eliminates parsing RatataAlolanForm by detecting Ratata
             else { // else parse the types
-                if (i)
-                    type1 += type.strip();
-                else
-                    type2 += type.strip();
+                if (i){
+                    if(type1.equals("None"))type1 = type.strip();
+                    type1.concat(type.strip());
+                }
+                else{
+                    if(type2.equals("None"))type2 = type.strip();
+                    type2.concat(type.strip());
+                }
                 i = !i; // alternate typing.
             } // interesting edge case (and possible future bug) where pokemon can have
               // several forms and be monotype
@@ -62,6 +70,7 @@ public class Pokemon {
     }
     @Override
     public String toString(){
-        return name + " " + type1 + " " + type2;
+        return name + " " + getTypesPretty();
     }
+    
 }
