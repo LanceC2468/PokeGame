@@ -1,4 +1,5 @@
 import java.net.*;
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 import javax.swing.text.Style;
@@ -297,8 +298,8 @@ public class Server {
                         // Write on all output streams
                         // output stream
                         if(mc.name != this.name){
-                            String colorcode = "\u001B[3" + this.col + "m";
-                            mc.dos.writeUTF(colorcode + this.name + RESET + " : " + MsgToSend);
+                            String colorcode = this.col +"\"";
+                            mc.dos.writeUTF(colorcode + this.name + " : " + MsgToSend);
                         }
                         
                     }
