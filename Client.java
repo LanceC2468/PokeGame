@@ -97,8 +97,10 @@ public class Client implements ActionListener
 	{ 
 		try { 
 			// write on the output stream 
-			dos.writeUTF(msg); 
-			jtf.setText("");
+			if(msg != ""){
+				dos.writeUTF(msg); 
+				jtf.setText("");
+			}
 		} catch (IOException e) { 
 			e.printStackTrace(); 
 		} 
