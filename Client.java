@@ -175,7 +175,7 @@ public class Client implements ActionListener
 			// read the message sent to this client 
 				doc.insertString(doc.getLength(),msg.substring(msg.indexOf("\"")+1,msg.indexOf(": ")), style);
 				StyleConstants.setForeground(style, Color.black);
-				doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": ")), style);
+				doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": "))+"\n", style);
 			} catch (BadLocationException e ) { 
 				//e.printStackTrace(); 
 			} 
