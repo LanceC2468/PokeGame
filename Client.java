@@ -35,6 +35,7 @@ public class Client implements ActionListener
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
 		jt = new JTextArea();
+		jt.setEditable(false);
 		jtf = new JTextField();
 		jsp = new JScrollPane(jt);
 		jtf.setMinimumSize(new Dimension(200,20));
@@ -130,7 +131,7 @@ public class Client implements ActionListener
 					try { 
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
-						jt.setText(jt.getText()+msg+"\n");
+						jt.append(msg+"\n");
 					} catch (IOException e) { 
 						break;
 						//e.printStackTrace(); 
