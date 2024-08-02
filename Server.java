@@ -16,7 +16,6 @@ public class Server {
             portNumber = 25565;
         }
         ServerSocket ss = new ServerSocket(portNumber);
-         fill();
         Socket s;
         int i = 1;
         // running infinite loop for getting
@@ -130,17 +129,39 @@ public class Server {
         }
     }
 */
-    public static LinkedList<Pokemon> fill(){
-        LinkedList<Pokemon> tempList = new LinkedList<Pokemon>();
+    public static boolean fill(ArrayList<Pokemon> emptyList){
         try{
-            Scanner line = new Scanner(new File(".\\PokemonData\\Names.txt"));
-            tempList.add(new Pokemon(line.nextLine()));
-            System.out.println(tempList.getFirst());
+            Scanner dex = new Scanner(new File(".\\PokemonData\\name_types.txt"));
+            dex.useDelimiter("\n");
+            String name_string = "";
+            String types_string;
+            final DataOutputStream dos;
+            while (dex.hasNext()) {
+                String data = dex.next(); // temporary data
+
+                if (data.contains("#"))
+                    continue; // throw away Ndex #
+                if (data.isBlank())
+                    continue; // throw away newline characters
+                if (name_string.isEmpty()) { // first string is name entry
+                    name_string = data;
+                    dex.useDelimiter("#"); // rest of string is types
+                    types_string = dex.next();
+                    dex.useDelimiter("\n");
+
+                    Pokemon pkmn = new Pokemon(name_string);
+                    pkmn.setTypes(types_string.strip());
+                    emptyList.add(pkmn);
+                    name_string = "";
+                    types_string = "";
+                }
+            }
         }
         catch(IOException e){
             System.out.println(e);
+            return false;
         }
-        return tempList;
+        return true;
     } 
 
 
@@ -180,6 +201,14 @@ public class Server {
             @Override 
             public void run(){
             String input;
+
+              //turn the file into a memory safe array shenanigans
+            ArrayList<Pokemon> plist = new ArrayList<Pokemon>();
+            fill(plist);
+            Pokemon parray[] = new Pokemon[plist.size()];
+            parray = plist.toArray(parray);
+            
+
                 while(true){
                     try{
                         // receive the string
@@ -214,6 +243,16 @@ public class Server {
                                 dos.writeUTF("Last letter will be the first for the next name."); 
                             }
                         }        
+                    }else if(input.equals("/TEST")){
+                        for(int i = 0; i < plist.size(); i++){
+                            System.out.println(i + " " + parray[i].getName());
+                        }
+                    }else if(input.contains("/")){
+                        dos.writeUTF("Unrecognized command.  Try /START to begin the game or /HELP for the help menu");
+                    }else if(input.equals("/HELP")){
+                        dos.writeUTF("/NAME\t\tchanges username");
+                        dos.writeUTF("/GAMEMODE\t\tchanges gamemode.  default is LAST2FIRST");
+                        dos.writeUTF("/START\t\tbegins the game");
                     }
                     if(input.charAt(input.length()-1)==lastLetter){
 
@@ -221,12 +260,15 @@ public class Server {
                     // break the string into message
                     StringTokenizer st = new StringTokenizer(input, "#");
                     String MsgToSend = st.nextToken();
-    
+                    
 
                     //implement full game here
                     if(!gamePause){
+                        // make the list of pokemon
+
+
                         switch(GAMEMODE){
-                            case 0:
+                            case LAST2FIRST:
                                 //is the input valid?
                                 
                                 break;
