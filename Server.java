@@ -254,13 +254,15 @@ public class Server {
                         }
                     }else if(input.contains("/")){
                         dos.writeUTF("Unrecognized command.  Try /START to begin the game or /HELP for the help menu");
+                    }else if(input.equals("/ECHO")){
+                        ECHO = !ECHO;
                     }else if(input.equals("/HELP")){
                         dos.writeUTF("/NAME\t\tchanges username");
                         dos.writeUTF("/GAMEMODE\t\tchanges gamemode.  default is LAST2FIRST");
                         dos.writeUTF("/START\t\tbegins the game");
                         dos.writeUTF("/TEST\t\tdebugging purposes");
                         dos.writeUTF("/QUIT\t\tterminate the game");
-                        dos.writeUTF("/ECHO\t\ttoggle server echoing client input.  default ON")
+                        dos.writeUTF("/ECHO\t\ttoggle server echoing client input.  default ON");
                     }else if(input.isBlank()) {
                         continue;
                     }
