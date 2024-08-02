@@ -72,5 +72,9 @@ public class Pokemon {
     public String toString(){
         return name + " " + getTypesPretty();
     }
+    public boolean checkTypes(String t){
+        if(t.equals(this.type1) || t.equals(this.type2)) return true;
+        return false;
+    }
     
 }
