@@ -156,6 +156,7 @@ public class Server {
                     types_string = "";
                 }
             }
+            dex.close();
         }
         catch(IOException e){
             System.out.println(e);
@@ -201,6 +202,7 @@ public class Server {
             @Override 
             public void run(){
             String input;
+            boolean ECHO = true;
 
               //turn the file into a memory safe array shenanigans
             ArrayList<Pokemon> plist = new ArrayList<Pokemon>();
@@ -214,7 +216,9 @@ public class Server {
                         // receive the string
                     input = dis.readUTF();
                     input = input.toUpperCase();
-                    System.out.println(input);
+                    if(ECHO == true)System.out.println(input);
+                    
+                    //cs 
                     
                     if(input.equals("GIVE UP") || input.equals("/QUIT")){
                         this.s.close();
@@ -245,7 +249,7 @@ public class Server {
                         }        
                     }else if(input.equals("/TEST")){
                         for(int i = 0; i < plist.size(); i++){
-                            System.out.println(i + " " + parray[i].getName());
+                            System.out.println(i + " " + parray[i].getTypes());
                         }
                     }else if(input.contains("/")){
                         dos.writeUTF("Unrecognized command.  Try /START to begin the game or /HELP for the help menu");
@@ -253,9 +257,14 @@ public class Server {
                         dos.writeUTF("/NAME\t\tchanges username");
                         dos.writeUTF("/GAMEMODE\t\tchanges gamemode.  default is LAST2FIRST");
                         dos.writeUTF("/START\t\tbegins the game");
+                        dos.writeUTF("/TEST\t\tdebugging purposes");
+                        dos.writeUTF("/QUIT\t\tterminate the game");
+                        dos.writeUTF("/ECHO\t\ttoggle server echoing client input.  default ON")
+                    }else if(input.isBlank()) {
+                        continue;
                     }
                     if(input.charAt(input.length()-1)==lastLetter){
-
+                        dos.writeUTF("Game Over! You suck!");
                     }
                     // break the string into message
                     StringTokenizer st = new StringTokenizer(input, "#");
@@ -265,7 +274,11 @@ public class Server {
                     //implement full game here
                     if(!gamePause){
                         // make the list of pokemon
-
+                        
+                        if(Arrays.stream(parray).anyMatch(input::equals)) {
+                            dos.writeUTF("Good job! " + input + " starts with '" + input.charAt(0) + "'.");
+                        }
+                        //if(Arrays.asList(parray).contains());
 
                         switch(GAMEMODE){
                             case LAST2FIRST:
