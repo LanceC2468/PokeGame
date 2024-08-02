@@ -12,11 +12,12 @@ import java.util.Scanner;
 
 public class Client implements ActionListener
 { 
+	static DataOutputStream dos;
 	JFrame jf = new JFrame("Pokegame");
 	JScrollPane jsp;
 	static JTextArea jt;
 	static JTextField jtf;
-	JButton snd;
+
    public static final int SERVER_PORT = 25565;  //some default port
    public String name;
 
@@ -38,7 +39,9 @@ public class Client implements ActionListener
 		jsp = new JScrollPane(jt);
 		jtf.setMinimumSize(new Dimension(200,20));
 		jtf.setMaximumSize(new Dimension(400,20));
-		snd = new JButton("Send Message");
+		JButton snd = new JButton("Send Message");
+
+		snd.addActionListener(this);
 
 		content.add(Box.createVerticalStrut(30));
 		Top.add(Box.createHorizontalStrut(10));
@@ -67,8 +70,21 @@ public class Client implements ActionListener
 	}
 
 	public void actionPerformed(ActionEvent e){
-
+		if(e.getActionCommand() == "Send Message"){
+			sendMessage(jtf.getText());
+        }
 	}
+	// sendMessage thread 
+	void sendMessage(String msg) 
+	{ 
+		try { 
+			// write on the output stream 
+			dos.writeUTF(msg); 
+			jtf.setText("");
+		} catch (IOException e) { 
+			e.printStackTrace(); 
+		} 
+	}; 
    public static void main(String args[]) throws UnknownHostException, IOException 
 	{ 
 	
@@ -97,31 +113,12 @@ public class Client implements ActionListener
 		
 		// obtaining input and out streams 
 		DataInputStream dis = new DataInputStream(s.getInputStream()); 
-		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+		dos = new DataOutputStream(s.getOutputStream()); 
 		javax.swing.SwingUtilities.invokeLater(
          () -> new Client()
       );
 
-		// sendMessage thread 
-		Thread sendMessage = new Thread(new Runnable() 
-		{ 
-			@Override
-			public void run() { 
-				while (true) { 
-
-					// read the message to deliver. 
-					String msg = scn.nextLine(); 
-
-					try { 
-						// write on the output stream 
-						dos.writeUTF(msg); 
-					} catch (IOException e) { 
-						e.printStackTrace(); 
-						break;
-					} 
-				} 
-			} 
-		}); 
+		
 		
 		// readMessage thread 
 		Thread readMessage = new Thread(new Runnable() 
@@ -133,7 +130,7 @@ public class Client implements ActionListener
 					try { 
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
-						System.out.println(msg); 
+						jt.setText(jt.getText()+msg+"\n");
 					} catch (IOException e) { 
 						break;
 						//e.printStackTrace(); 
@@ -142,7 +139,7 @@ public class Client implements ActionListener
 			} 
 		}); 
 
-		sendMessage.start(); 
+		//sendMessage.start(); 
 		readMessage.start(); 
 
 
