@@ -247,6 +247,12 @@ public class Server {
                         for(int i = 0; i < plist.size(); i++){
                             System.out.println(i + " " + parray[i].getName());
                         }
+                    }else if(input.contains("/")){
+                        dos.writeUTF("Unrecognized command.  Try /START to begin the game or /HELP for the help menu");
+                    }else if(input.equals("/HELP")){
+                        dos.writeUTF("/NAME\t\tchanges username");
+                        dos.writeUTF("/GAMEMODE\t\tchanges gamemode.  default is LAST2FIRST");
+                        dos.writeUTF("/START\t\tbegins the game");
                     }
                     if(input.charAt(input.length()-1)==lastLetter){
 
