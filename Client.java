@@ -1,23 +1,75 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.util.Scanner;
+
+
+import javax.swing.*;
+import java.awt.Dimension;
 // Java implementation for multithreaded chat client - https://www.geeksforgeeks.org/multi-threaded-chat-application-set-2/
 // Save file as Client.java 
-
-
+import java.awt.event.*;
 import java.io.*; 
 import java.net.*; 
 import java.util.Scanner; 
 
-public class Client 
+public class Client implements ActionListener
 { 
+	JFrame jf = new JFrame("Pokegame");
+	JScrollPane jsp;
+	static JTextArea jt;
+	static JTextField jtf;
+	JButton snd;
    public static final int SERVER_PORT = 25565;  //some default port
    public String name;
-	public static void main(String args[]) throws UnknownHostException, IOException 
+
+	public Client(){
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setSize(400, 400);
+		
+		JPanel textPanel = new JPanel();
+		textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
+		JPanel Top = new JPanel();
+		Top.setLayout(new BoxLayout(Top, BoxLayout.X_AXIS));
+		JPanel Bot = new JPanel();
+		Bot.setLayout(new BoxLayout(Bot, BoxLayout.X_AXIS));
+		JPanel content = new JPanel();
+		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+
+		jt = new JTextArea();
+		jtf = new JTextField();
+		jsp = new JScrollPane(jt);
+		jtf.setMinimumSize(new Dimension(200,20));
+		jtf.setMaximumSize(new Dimension(400,20));
+		snd = new JButton("Send Message");
+
+		content.add(Box.createVerticalStrut(30));
+		Top.add(Box.createHorizontalStrut(10));
+		Top.add(jsp);
+		Top.add(Box.createHorizontalStrut(10));
+		content.add(Top);
+		content.add(Box.createVerticalStrut(30));
+
+		
+		textPanel.add(jtf);
+
+		content.add(textPanel);
+		content.add(Box.createVerticalStrut(30));
+
+		Bot.add(Box.createHorizontalGlue());
+		Bot.add(snd);
+		Bot.add(Box.createHorizontalGlue());
+		content.add(Bot);
+		content.add(Box.createVerticalStrut(30));
+		
+		
+
+
+		jf.add(content);
+		jf.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent e){
+
+	}
+   public static void main(String args[]) throws UnknownHostException, IOException 
 	{ 
 	
        final String hostName;
@@ -46,6 +98,9 @@ public class Client
 		// obtaining input and out streams 
 		DataInputStream dis = new DataInputStream(s.getInputStream()); 
 		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+		javax.swing.SwingUtilities.invokeLater(
+         () -> new Client()
+      );
 
 		// sendMessage thread 
 		Thread sendMessage = new Thread(new Runnable() 
