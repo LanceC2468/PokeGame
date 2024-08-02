@@ -2,6 +2,12 @@ import java.util.Scanner;
 
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import java.awt.Color;
 import java.awt.Dimension;
 // Java implementation for multithreaded chat client - https://www.geeksforgeeks.org/multi-threaded-chat-application-set-2/
 // Save file as Client.java 
@@ -13,11 +19,13 @@ import java.util.Scanner;
 public class Client implements ActionListener
 { 
 	static DataOutputStream dos;
+	static DataInputStream dis;
 	JFrame jf = new JFrame("Pokegame");
 	JScrollPane jsp;
-	static JTextArea jt;
+	static JTextPane jt;
 	static JTextField jtf;
-
+	static StyledDocument doc;
+	static Style style;
    public static final int SERVER_PORT = 25565;  //some default port
    public String name;
 
@@ -34,8 +42,12 @@ public class Client implements ActionListener
 		JPanel content = new JPanel();
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-		jt = new JTextArea();
+		jt = new JTextPane();
 		jt.setEditable(false);
+		doc = jt.getStyledDocument();
+		jt.setDocument(doc);
+		style = jt.addStyle("name style", null);
+
 		jtf = new JTextField();
 		jsp = new JScrollPane(jt);
 		jtf.setMinimumSize(new Dimension(200,20));
@@ -68,6 +80,11 @@ public class Client implements ActionListener
 
 		jf.add(content);
 		jf.setVisible(true);
+
+		
+
+		//sendMessage.start(); 
+		readMessage.start(); 
 	}
 
 	public void actionPerformed(ActionEvent e){
@@ -113,7 +130,7 @@ public class Client implements ActionListener
 		Socket s = new Socket(ip, portNumber); 
 		
 		// obtaining input and out streams 
-		DataInputStream dis = new DataInputStream(s.getInputStream()); 
+		dis = new DataInputStream(s.getInputStream()); 
 		dos = new DataOutputStream(s.getOutputStream()); 
 		javax.swing.SwingUtilities.invokeLater(
          () -> new Client()
@@ -121,28 +138,51 @@ public class Client implements ActionListener
 
 		
 		
-		// readMessage thread 
-		Thread readMessage = new Thread(new Runnable() 
-		{ 
-			@Override
-			public void run() { 
-
-				while (true) { 
-					try { 
-						// read the message sent to this client 
-						String msg = dis.readUTF(); 
-						jt.append(msg+"\n");
-					} catch (IOException e) { 
-						break;
-						//e.printStackTrace(); 
-					} 
-				} 
-			} 
-		}); 
-
-		//sendMessage.start(); 
-		readMessage.start(); 
+		
 
 
 	} 
+	// readMessage thread 
+	Thread readMessage = new Thread(new Runnable() 
+	{ 
+		@Override
+		public void run() { 
+
+			while (true) { 
+				WriteMessage();
+				/*try { 
+					StyleConstants.setForeground(style, Color.black);
+					// read the message sent to this client 
+					try{
+						doc.insertString(doc.getLength(),dis.readUTF()+"\n", style);
+					}catch(IOException x){
+						break;
+					}
+					
+				} catch (BadLocationException e ) { 
+					break;
+					//e.printStackTrace(); 
+				} */
+			} 
+		} 
+	}); 
+	Color[] col = {Color.BLACK,Color.BLUE,Color.CYAN,Color.GREEN,Color.MAGENTA,Color.orange,Color.yellow,Color.RED.darker()};
+	void WriteMessage(){
+		try{
+			String msg = dis.readUTF();
+			try { 
+			StyleConstants.setForeground(style, col[Integer.parseInt(msg.substring(0,msg.indexOf("\"")))]);
+			// read the message sent to this client 
+				doc.insertString(doc.getLength(),msg.substring(msg.indexOf("\"")+1,msg.indexOf(": ")), style);
+				StyleConstants.setForeground(style, Color.black);
+				doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": ")), style);
+			} catch (BadLocationException e ) { 
+				//e.printStackTrace(); 
+			} 
+			StyleConstants.setForeground(style, Color.black);
+		}catch(IOException x){
+
+		}
+		
+	}
 }
