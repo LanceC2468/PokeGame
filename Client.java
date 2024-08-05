@@ -16,7 +16,7 @@ import java.io.*;
 import java.net.*; 
 import java.util.Scanner; 
 
-public class Client implements ActionListener
+public class Client implements ActionListener, KeyListener
 { 
 	static DataOutputStream dos;
 	static DataInputStream dis;
@@ -52,6 +52,7 @@ public class Client implements ActionListener
 		jsp = new JScrollPane(jt);
 		jtf.setMinimumSize(new Dimension(200,20));
 		jtf.setMaximumSize(new Dimension(400,20));
+		jtf.addKeyListener(this);
 		JButton snd = new JButton("Send Message");
 
 		snd.addActionListener(this);
@@ -85,6 +86,17 @@ public class Client implements ActionListener
 
 		//sendMessage.start(); 
 		readMessage.start(); 
+	}
+	public void keyTyped(KeyEvent e){
+
+	}
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == 10){
+			sendMessage(jtf.getText());
+		}
+	}
+	public void keyReleased(KeyEvent e) {
+
 	}
 
 	public void actionPerformed(ActionEvent e){

@@ -299,10 +299,11 @@ public class Server {
                     {
                         // Write on all output streams
                         // output stream
-                        if(mc.name != this.name){
+                        // if statment no longer needed
+                        //if(mc.name != this.name){
                             String colorcode = this.col +"\"";
                             mc.dos.writeUTF(colorcode + this.name + " : " + MsgToSend);
-                        }
+                        //}
                         
                     }
                     } catch (IOException e) {
