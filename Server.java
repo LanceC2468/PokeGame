@@ -178,7 +178,8 @@ public class Server {
         final DataOutputStream dos;
         Socket s;
         private int col;
-        int ID;
+        int ID;   //clientID
+        int gID;  //gameID
 
         //Rule Flags
         boolean gamePause   = true;
@@ -203,6 +204,12 @@ public class Server {
             this.name = name;
             this.s = socket;
             this.col = (col % 6) + 1;  //cycles between red, green, yellow, blue, magenta, cyan
+        }
+
+        public void sendMessage(String send, ClientHandler held) {
+            try{
+                held.dos.writeUTF(send);
+            }catch(IOException e){}
         }
 
         public void sendMessage(String send, Vector<ClientHandler> held){
@@ -313,32 +320,38 @@ public class Server {
                     String MsgToSend = st.nextToken();
                     
 
+                    /*
+                    //LANCE what you want to implement is a scenario where (I assume) the server handles multiple games simultaneously.
+                    //I will further assume that each client will have access to ONLY 1 game.
+                    */
+
                     //implement full game here
                     if(!gamePause){
                         // make the list of pokemon
-                        
+                        System.out.println(gamePause);
                         for(game g : games){
+                            Vector<ClientHandler> players = g.getPlayers();
+                            for(ClientHandler p : players){
+                                sendMessage(input, p);
+                            }
+                        }
+                        /*
+                        for(game g : games){  //iterate through a bunch of games.  Then, check if the gameID matches "this"????
                             if(g.ID == this.ID){
                                 sendMessage(this.col,this.name, MsgToSend, g.getPlayers());
                             }
                         }
-
+                        */
                         if(Arrays.stream(parray).anyMatch(input::equals)) {
                             dos.writeUTF("Good job! " + input + " starts with '" + input.charAt(0) + "'.");
-                        }
+                        }else{sendMessage(this.col,this.name, MsgToSend, ar);}
                         //if(Arrays.asList(parray).contains());
 
-                        switch(GAMEMODE){
-                            case LAST2FIRST:
-                                //is the input valid?
-                                if(input.charAt(0)!=lastLetter){
-                                    dos.writeUTF("Game Over! You suck!");
-                                }
-                                
-                                break;
-                            case 2:
-                                break;
-                        }
+                        //is the input valid?
+                        String guess = input;
+                        //checkGuess();  //ensure valid input  (i.e. not NULL, no leading or trailing white-space, handle special or escape sequences)
+                        //game(guess);   //game is a state machine.  it maintains a list of "used-up" pokemon.  dole out penalty on bad guess.  continue on good guess.
+
                     }else {
                         sendMessage(this.col,this.name, MsgToSend, ar);
                     }
@@ -355,12 +368,26 @@ public class Server {
     }
 
     static class game {
+        ArrayList<Pokemon> usedPokemonList = new ArrayList<Pokemon>();
+        Pokemon currentPokemon;
         Vector<ClientHandler> players;
         int ID;
+        int GAMEMODE;
         public game(int ID,Vector<ClientHandler> players){
             this.ID = ID;
             this.players = players;
         }
+        public ArrayList<Pokemon> getUsedPokemonList(){
+            return this.usedPokemonList;
+        }
+        public boolean guess(String g) {  
+            //the user supplies a guess g.
+            //behavior of a valid guess g is dependent on GAMEMODE
+            //game then updates usedPokemonList and currentPokemon respectively.
+
+            return true;
+        }
+        
 
         public Vector<ClientHandler> getPlayers(){
             return players;
