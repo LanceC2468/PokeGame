@@ -185,11 +185,17 @@ public class Client implements ActionListener, KeyListener
 		try{
 			String msg = dis.readUTF();
 			try { 
-			StyleConstants.setForeground(style, col[Integer.parseInt(msg.substring(0,msg.indexOf("\"")))]);
-			// read the message sent to this client 
-				doc.insertString(doc.getLength(),msg.substring(msg.indexOf("\"")+1,msg.indexOf(": ")), style);
-				StyleConstants.setForeground(style, Color.black);
-				doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": "))+"\n", style);
+				if(msg.indexOf("\"")!= -1 && msg.indexOf(": ")!= -1){
+					StyleConstants.setForeground(style, col[Integer.parseInt(msg.substring(0,msg.indexOf("\"")))]);
+					// read the message sent to this client 
+					doc.insertString(doc.getLength(),msg.substring(msg.indexOf("\"")+1,msg.indexOf(": ")), style);
+					StyleConstants.setForeground(style, Color.black);
+					doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": "))+"\n", style);
+				}else{
+					StyleConstants.setBold(style, true);
+					doc.insertString(doc.getLength(), msg +"\n", style);
+					StyleConstants.setBold(style, false);
+				}
 			} catch (BadLocationException e ) { 
 				//e.printStackTrace(); 
 			} 
