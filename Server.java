@@ -6,6 +6,7 @@ import javax.swing.text.Style;
 import PokemonData.src.Pokemon;
 public class Server {
     static Vector<ClientHandler> ar = new Vector<>();
+    static Vector<game> games = new Vector<>();
         public static void main(String[] args) throws IOException {
             final int portNumber;
         if (args.length > 0)
@@ -97,7 +98,7 @@ public class Server {
     //other constants
     public static boolean ECHO = true;
 
-
+    static int gameID = 1141;
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
     LinkedList<String> usedNames = new LinkedList<String>();
     LinkedList<Pokemon> pokemon = new LinkedList<Pokemon>();
@@ -177,6 +178,7 @@ public class Server {
         final DataOutputStream dos;
         Socket s;
         private int col;
+        int ID;
 
         //Rule Flags
         boolean gamePause   = true;
@@ -202,6 +204,30 @@ public class Server {
             this.s = socket;
             this.col = (col % 6) + 1;  //cycles between red, green, yellow, blue, magenta, cyan
         }
+
+        public void sendMessage(String send, Vector<ClientHandler> held){
+            for(ClientHandler mc : held){
+                try{
+                    mc.dos.writeUTF(send);
+                }catch(IOException e){
+
+                }
+                
+            }
+        }
+
+        public void sendMessage(int color, String nm, String send, Vector<ClientHandler> held){
+            String colorcode = col +"\"";
+            for(ClientHandler mc : held){
+                try{
+                    mc.dos.writeUTF(colorcode + nm + " : " + send);
+                }catch(IOException e){
+
+                }
+                
+            }
+        }
+
             @Override 
             public void run(){
             String input;
@@ -229,10 +255,21 @@ public class Server {
                         Random r = new Random();
                         gamePause = false;
                         lastLetter = (char)(r.nextInt(26)+'A');
-                        for(ClientHandler mc : Server.ar){
-                            mc.dos.writeUTF("The first letter to use is: " + lastLetter);
+                        games.add(new game(gameID,Server.ar));
+                        for(game g : games){
+                            if(g.isPlayer(this)){
+                                for(ClientHandler mc : g.getPlayers()){
+                                    mc.gamePause = false;
+                                    mc.ID = gameID;
+                                }
+                                sendMessage("The first letter to use is: " + lastLetter, g.getPlayers());
+                                gameID++;
+                            }
+                            
                         }
-                        //continue;
+                        gameID++;
+                        Server.ar.clear();
+                        continue;
                     }else if(input.contains("/NAME")){
                         StringTokenizer newName = new StringTokenizer(input, " ");
                         if(newName.countTokens()>1){
@@ -270,11 +307,7 @@ public class Server {
                     }else if(input.isBlank()) {
                         continue;
                     }
-                    /*
-                    if(input.charAt(input.length()-1)==lastLetter){
-                        dos.writeUTF("Game Over! You suck!");
-                    }
-                    */
+                    
                     // break the string into message
                     StringTokenizer st = new StringTokenizer(input, "#");
                     String MsgToSend = st.nextToken();
@@ -284,6 +317,12 @@ public class Server {
                     if(!gamePause){
                         // make the list of pokemon
                         
+                        for(game g : games){
+                            if(g.ID == this.ID){
+                                sendMessage(this.col,this.name, MsgToSend, g.getPlayers());
+                            }
+                        }
+
                         if(Arrays.stream(parray).anyMatch(input::equals)) {
                             dos.writeUTF("Good job! " + input + " starts with '" + input.charAt(0) + "'.");
                         }
@@ -292,30 +331,51 @@ public class Server {
                         switch(GAMEMODE){
                             case LAST2FIRST:
                                 //is the input valid?
+                                if(input.charAt(0)!=lastLetter){
+                                    dos.writeUTF("Game Over! You suck!");
+                                }
                                 
                                 break;
                             case 2:
                                 break;
                         }
+                    }else {
+                        sendMessage(this.col,this.name, MsgToSend, ar);
                     }
 
 
-                    //print response to all clients.
-                    for (ClientHandler mc : Server.ar) 
-                    {
-                        // Write on all output streams
-                        // output stream
-                        if(mc.name != this.name){
-                            String colorcode = this.col +"\"";
-                            mc.dos.writeUTF(colorcode + this.name + " : " + MsgToSend);
-                        }
-                        
-                    }
                     } catch (IOException e) {
                         break;
                         //e.printStackTrace();
                     }
                 }
             }
+
+            
     }
+
+    static class game {
+        Vector<ClientHandler> players;
+        int ID;
+        public game(int ID,Vector<ClientHandler> players){
+            this.ID = ID;
+            this.players = players;
+        }
+
+        public Vector<ClientHandler> getPlayers(){
+            return players;
+        }
+
+        public int getID(){
+            return ID;
+        }
+        
+        public boolean isPlayer(ClientHandler player){
+            if(players.contains(player)){
+                return true;
+            }
+            return false;
+        }
+    }
+    
 }

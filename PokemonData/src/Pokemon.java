@@ -76,5 +76,14 @@ public class Pokemon {
         if(t.equals(this.type1) || t.equals(this.type2)) return true;
         return false;
     }
+    public char getLastLetter(){
+        char LL = ' ';
+        int i = 1;
+        while (!Character.isLetter(name.charAt(name.length()-1))) {
+           LL = name.charAt(name.length()-i);
+           i++;
+        }
+        return LL;
+    }
     
 }

@@ -16,7 +16,7 @@ import java.io.*;
 import java.net.*; 
 import java.util.Scanner; 
 
-public class Client implements ActionListener
+public class Client implements ActionListener, KeyListener
 { 
 	static DataOutputStream dos;
 	static DataInputStream dis;
@@ -52,6 +52,7 @@ public class Client implements ActionListener
 		jsp = new JScrollPane(jt);
 		jtf.setMinimumSize(new Dimension(200,20));
 		jtf.setMaximumSize(new Dimension(400,20));
+		jtf.addKeyListener(this);
 		JButton snd = new JButton("Send Message");
 
 		snd.addActionListener(this);
@@ -85,6 +86,17 @@ public class Client implements ActionListener
 
 		//sendMessage.start(); 
 		readMessage.start(); 
+	}
+	public void keyTyped(KeyEvent e){
+
+	}
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == 10){
+			sendMessage(jtf.getText());
+		}
+	}
+	public void keyReleased(KeyEvent e) {
+
 	}
 
 	public void actionPerformed(ActionEvent e){
@@ -173,11 +185,17 @@ public class Client implements ActionListener
 		try{
 			String msg = dis.readUTF();
 			try { 
-			StyleConstants.setForeground(style, col[Integer.parseInt(msg.substring(0,msg.indexOf("\"")))]);
-			// read the message sent to this client 
-				doc.insertString(doc.getLength(),msg.substring(msg.indexOf("\"")+1,msg.indexOf(": ")), style);
-				StyleConstants.setForeground(style, Color.black);
-				doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": "))+"\n", style);
+				if(msg.indexOf("\"")!= -1 && msg.indexOf(": ")!= -1){
+					StyleConstants.setForeground(style, col[Integer.parseInt(msg.substring(0,msg.indexOf("\"")))]);
+					// read the message sent to this client 
+					doc.insertString(doc.getLength(),msg.substring(msg.indexOf("\"")+1,msg.indexOf(": ")), style);
+					StyleConstants.setForeground(style, Color.black);
+					doc.insertString(doc.getLength(),msg.substring(msg.indexOf(": "))+"\n", style);
+				}else{
+					StyleConstants.setBold(style, true);
+					doc.insertString(doc.getLength(), msg +"\n", style);
+					StyleConstants.setBold(style, false);
+				}
 			} catch (BadLocationException e ) { 
 				//e.printStackTrace(); 
 			} 
