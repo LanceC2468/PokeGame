@@ -94,6 +94,8 @@ public class Server {
     public static final int FAIRY = 18;
     public static final int NONE = 19;
     
+    //other constants
+    public static boolean ECHO = true;
 
 
     public int[] letterAvail = {45,55,86,61,26,40,66,34,18,8,32,40,79,23,15,65,7,40,135,64,7,25,30,3,6,14};
@@ -203,7 +205,6 @@ public class Server {
             @Override 
             public void run(){
             String input;
-            boolean ECHO = true;
 
               //turn the file into a memory safe array shenanigans
             ArrayList<Pokemon> plist = new ArrayList<Pokemon>();
@@ -217,7 +218,7 @@ public class Server {
                         // receive the string
                     input = dis.readUTF();
                     input = input.toUpperCase();
-                    if(ECHO == true)System.out.println(input);
+                    if(ECHO)System.out.println(input);
                     
                     //cs 
                     
@@ -255,7 +256,10 @@ public class Server {
                     }else if(input.contains("/")){
                         dos.writeUTF("Unrecognized command.  Try /START to begin the game or /HELP for the help menu");
                     }else if(input.equals("/ECHO")){
+                        if(ECHO)dos.writeUTF("Disabling echo on server");
+                        else dos.writeUTF("Enabling echo on server");
                         ECHO = !ECHO;
+                        continue;
                     }else if(input.equals("/HELP")){
                         dos.writeUTF("/NAME\t\tchanges username");
                         dos.writeUTF("/GAMEMODE\t\tchanges gamemode.  default is LAST2FIRST");
@@ -266,9 +270,11 @@ public class Server {
                     }else if(input.isBlank()) {
                         continue;
                     }
+                    /*
                     if(input.charAt(input.length()-1)==lastLetter){
                         dos.writeUTF("Game Over! You suck!");
                     }
+                    */
                     // break the string into message
                     StringTokenizer st = new StringTokenizer(input, "#");
                     String MsgToSend = st.nextToken();
